@@ -1,41 +1,44 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { Button, Input, Select, RTE } from "../index";
+import { Button, Input, RTE, Select } from "..";
 import appwriteService from "../../appwrite/conf";
-import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 export default function PostForm({ post }) {
     const { register, handleSubmit, watch, setValue, control, getValues } =
         useForm({
             defaultValues: {
-                title: post ? post.title : "",
-                slug: post ? post.slug : "",
-                content: post ? post.content : "",
-                status: post ? post.status : "",
+                title: post?.title || "",
+                slug: post?.$id || "",
+                content: post?.content || "",
+                status: post?.status || "active",
             },
         });
+
     const navigate = useNavigate();
     const userData = useSelector((state) => state.auth.userData);
 
     const submit = async (data) => {
         if (post) {
-            data.images[0] ? appwriteService.uploadFile(data.images[0]) : null;
+            const file = data.image[0]
+                ? await appwriteService.uploadFile(data.image[0])
+                : null;
 
             if (file) {
                 appwriteService.deleteFile(post.featuredImage);
             }
 
-            const dbPost = await appwriteService.updatePost(post.$ID, {
+            const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
                 featuredImage: file ? file.$id : undefined,
             });
 
             if (dbPost) {
-                navigate("/post/${dbPost.$id}");
+                navigate(`/post/${dbPost.$id}`);
             }
         } else {
-            const file = await appwriteService.uploadFile(data.images[0]);
+            const file = await appwriteService.uploadFile(data.image[0]);
 
             if (file) {
                 const fileId = file.$id;
@@ -46,7 +49,7 @@ export default function PostForm({ post }) {
                 });
 
                 if (dbPost) {
-                    navigate("/post/${dbPost.$id}");
+                    navigate(`/post/${dbPost.$id}`);
                 }
             }
         }
@@ -57,19 +60,18 @@ export default function PostForm({ post }) {
             return value
                 .trim()
                 .toLowerCase()
-                .replace(/^[a-zA-Z\d\s]+/g, "-")
+                .replace(/[^a-zA-Z\d\s]+/g, "-")
                 .replace(/\s/g, "-");
 
         return "";
     }, []);
 
-    useEffect(() => {
+    React.useEffect(() => {
         const subscription = watch((value, { name }) => {
             if (name === "title") {
-                setValue(
-                    "slug",
-                    slugTransform(value.title, { shouldValidate: true })
-                );
+                setValue("slug", slugTransform(value.title), {
+                    shouldValidate: true,
+                });
             }
         });
 

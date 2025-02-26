@@ -37,21 +37,24 @@ export default function Header() {
     ];
 
     return (
-        <header className="py-3 shadow bg-gray-500">
+        <header className="py-4 shadow-lg bg-gradient-to-r from-blue-500 to-orange-500">
             <Container>
-                <nav className="flex">
-                    <div className="mr-4">
+                <nav className="flex items-center justify-between">
+                    <div className="mr-6">
                         <Link to="/">
-                            <Logo width="70px" />
+                            <Logo
+                                width="70px"
+                                className="transition-transform transform hover:scale-110"
+                            />
                         </Link>
                     </div>
-                    <ul className="flex ml-auto">
+                    <ul className="flex ml-auto space-x-4">
                         {navItems.map((item) =>
                             item.active ? (
-                                <li key={item.name}>
+                                <li key={item.name} className="group">
                                     <button
                                         onClick={() => navigate(item.slug)}
-                                        className="inline-block px-6 py-2 duration-200 hover:bg-blue-100 rounded-full"
+                                        className="inline-block px-6 py-2 font-semibold text-white duration-200 bg-blue-700 rounded-full hover:bg-blue-600 group-hover:shadow-lg"
                                     >
                                         {item.name}
                                     </button>
@@ -59,7 +62,7 @@ export default function Header() {
                             ) : null
                         )}
                         {authStatus && (
-                            <li>
+                            <li className="group">
                                 <LogoutBtn />
                             </li>
                         )}
