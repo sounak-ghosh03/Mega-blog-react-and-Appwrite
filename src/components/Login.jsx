@@ -67,11 +67,11 @@ function Login() {
                             {...register("password", { required: true })}
                         />
                     </div>
-                    <Button type="submit" className="w-full m-2">
+                    <Button type="submit" className="w-full m-2 hover:bg-blue-700">
                         Sign in
                     </Button>
                 </form>
-                <p className="mt-2 text-center text-base text-black/60">
+                <p className="mt-2 text-center text-base text-black/70">
                     Don&apos;t have any account?&nbsp;
                     <Link
                         to="/signup"
